@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实习详情</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #eaeaea;
+        }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-logo {
+            font-size: 26px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #ffb6c1, #c8a2c8);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-menu a {
+            color: #eaeaea;
+            text-decoration: none;
+            margin-left: 28px;
+            font-size: 15px;
+        }
+
+        .container {
+            width: 82%;
+            margin: 50px auto;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .detail-card h2 {
+            color: #ffb6c1;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+            font-size: 24px;
+        }
+
+        .detail-info {
+            margin: 18px 0;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #e0e0e0;
+        }
+
+        .detail-info span {
+            color: #ffb6c1;
+            font-weight: 600;
+            display: inline-block;
+            width: 110px;
+        }
+    </style>
+</head>
+<body>
+<div class="nav">
+    <div class="nav-logo">智慧实习直聘平台</div>
+    <div class="nav-menu">
+        <a href="index.html">首页</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="detail-card" id="detailCard">
+        <!-- 数据由 AJAX 加载 -->
+    </div>
+</div>
+
+<script>
+    // 获取URL参数
+    function getQueryParam(name){
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    // 加载岗位详情
+    function loadDetail(){
+        const id = getQueryParam('id');
+        if(!id){
+            document.getElementById('detailCard').innerHTML = '<div style="text-align:center;padding:40px;">参数错误</div>';
+            return;
+        }
+
+        fetch('detail.php?id=' + id)
+            .then(res => res.json())
+            .then(data => {
+                if(data.code === 1){
+                    renderDetail(data.data);
+                }else{
+                    alert(data.msg);
+                    location.href = 'index.html';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('detailCard').innerHTML = '<div style="text-align:center;padding:40px;">加载失败</div>';
+            });
+    }
+
+    // 渲染详情
+    function renderDetail(job){
+        document.getElementById('detailCard').innerHTML = `
+            <h2>${job.iname} - 岗位详情</h2>
+            <div class="detail-info"><span>学历要求：</span>${job.edu}</div>
+            <div class="detail-info"><span>薪资待遇：</span>${job.salary}</div>
+            <div class="detail-info"><span>工作地点：</span>${job.waddr}</div>
+            <div class="detail-info"><span>岗位要求：</span>${job.request}</div>
+        `;
+    }
+
+    // 页面加载时获取数据
+    window.onload = loadDetail;
+</script>
+</body>
+</html>

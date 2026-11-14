@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧实习直聘平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #eaeaea;
+            min-height: 100vh;
+        }
+
+        .nav {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .nav-logo {
+            font-size: 26px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #ffb6c1, #c8a2c8);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-menu a {
+            color: #eaeaea;
+            text-decoration: none;
+            margin-left: 28px;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255, 182, 193, 0.15);
+            border-color: rgba(255, 182, 193, 0.3);
+            box-shadow: 0 0 10px rgba(255, 182, 193, 0.2);
+        }
+
+        .container {
+            width: 88%;
+            margin: 40px auto;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            padding: 28px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .search-box input {
+            width: 65%;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            border-radius: 50px;
+            outline: none;
+            font-size: 15px;
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #ffb6c1;
+            box-shadow: 0 0 12px rgba(255, 182, 193, 0.3);
+        }
+
+        .search-box button {
+            padding: 14px 32px;
+            background: linear-gradient(90deg, #ffb6c1, #d890a5);
+            border: none;
+            color: #1a1a2e;
+            border-radius: 50px;
+            margin-left: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+        }
+
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 182, 193, 0.4);
+        }
+
+        .cate {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+
+        .cate-item {
+            padding: 10px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cate-item.active {
+            background: rgba(255, 182, 193, 0.15);
+            border-color: #ffb6c1;
+            color: #ffb6c1;
+        }
+
+        .cate-item:hover {
+            background: rgba(255, 182, 193, 0.15);
+            border-color: #ffb6c1;
+            color: #ffb6c1;
+        }
+
+        .job-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .job-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 182, 193, 0.15);
+            border-radius: 22px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .job-card.hide {
+            display: none;
+        }
+
+        .job-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255, 182, 193, 0.4);
+            box-shadow: 0 12px 35px rgba(255, 182, 193, 0.15);
+        }
+
+        .job-card h3 {
+            color: #ffb6c1;
+            margin-bottom: 14px;
+            font-size: 19px;
+        }
+
+        .job-info {
+            font-size: 14px;
+            color: #b2b2b2;
+            margin: 8px 0;
+        }
+
+        .job-card a {
+            display: inline-block;
+            margin-top: 16px;
+            color: #ffb6c1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .job-card a:hover {
+            text-shadow: 0 0 8px rgba(255, 182, 193, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 182, 193, 0.1);
+        }
+
+        .user-status {
+            color: #ffb6c1;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="nav">
+    <div class="nav-logo">智慧实习直聘平台</div>
+    <div class="nav-menu">
+        <span class="user-status" id="userStatus"></span>
+        <a href="index.html">首页</a>
+        <a href="login.html" id="loginLink">登录</a>
+        <a href="manage.html" id="manageLink" style="display:none;">实习管理</a>
+        <a href="ai.html">AI问答</a>
+        <a href="#" id="logoutBtn" style="display:none;">退出</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="search-box">
+        <input id="searchInput" type="text" placeholder="搜索岗位/公司/关键词">
+        <button onclick="searchJob()">智能搜索</button>
+    </div>
+
+    <div class="cate">
+        <div class="cate-item active" data-type="all">全部岗位</div>
+        <div class="cate-item" data-type="it">计算机IT</div>
+        <div class="cate-item" data-type="design">设计创意</div>
+        <div class="cate-item" data-type="finance">金融财会</div>
+        <div class="cate-item" data-type="admin">文职行政</div>
+    </div>
+
+    <div class="job-list" id="jobList">
+
+    </div>
+</div>
+
+<div class="footer">
+    智慧实习直聘平台 © 2026 动态网页课程设计 | 科技感灰粉主题
+</div>
+
+<script>
+    // 加载岗位数据
+    function loadJobs(){
+        fetch('index1.php')
+            .then(res => res.json())
+            .then(data => {
+                if(data.code === 1){
+                    renderJobs(data.data);
+                }else{
+                    document.getElementById('jobList').innerHTML = '<div style="text-align:center;color:#777;padding:40px;">加载失败</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('jobList').innerHTML = '<div style="text-align:center;color:#777;padding:40px;">网络错误</div>';
+            });
+    }
+
+    // 渲染岗位列表
+    function renderJobs(jobs){
+        const container = document.getElementById('jobList');
+        if(jobs.length === 0){
+            container.innerHTML = '<div style="text-align:center;color:#777;padding:40px;">暂无岗位信息</div>';
+            return;
+        }
+
+        let html = '';
+        jobs.forEach(job => {
+            const key = job.iname + ' ' + job.waddr + ' ' + job.edu;
+            html += `
+                <div class="job-card" data-type="${job.category}" data-key="${key}">
+                    <h3>${job.iname}</h3>
+                    <div class="job-info">🏢 ${job.waddr}</div>
+                    <div class="job-info">🎓 ${job.edu}</div>
+                    <div class="job-info">💰 ${job.salary}</div>
+                    <a href="javascript:void(0)" onclick="checkLoginAndGo(${job.intid})">查看详情 →</a>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+
+        // 重新绑定分类筛选
+        bindCategoryFilter();
+    }
+
+    // 分类筛选
+    function bindCategoryFilter(){
+        const cateItems = document.querySelectorAll('.cate-item');
+        const jobCards = document.querySelectorAll('.job-card');
+
+        cateItems.forEach(item => {
+            item.onclick = function(){
+                cateItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                let type = this.getAttribute('data-type');
+                jobCards.forEach(card => {
+                    if(card.getAttribute('data-type') === type || type === 'all'){
+                        card.classList.remove('hide');
+                    }else{
+                        card.classList.add('hide');
+                    }
+                });
+            }
+        });
+    }
+
+    // 智能搜索
+    function searchJob(){
+        let key = document.getElementById('searchInput').value.trim().toLowerCase();
+        let jobs = document.querySelectorAll('.job-card');
+
+        jobs.forEach(card => {
+            let text = card.getAttribute('data-key').toLowerCase();
+            if(text.includes(key)){
+                card.classList.remove('hide');
+            }else{
+                card.classList.add('hide');
+            }
+        });
+    }
+
+    // 回车搜索
+    document.getElementById('searchInput').addEventListener('keydown',function(e){
+        if(e.key === 'Enter'){
+            searchJob();
+        }
+    });
+
+    // 检查登录状态，更新导航栏
+    function checkLoginStatus() {
+
+        if (localStorage.getItem('isLogin') !== 'true') {
+            document.getElementById('userStatus').innerText = '未登录';
+            document.getElementById('loginLink').style.display = '';
+            document.getElementById('manageLink').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            return;
+        }
+
+        const cookies = document.cookie.split(';');
+        let username = null;
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'username') {
+                username = decodeURIComponent(value);
+                break;
+            }
+        }
+
+        if (!username) {
+
+            localStorage.removeItem('isLogin');
+            localStorage.removeItem('user');
+            document.getElementById('userStatus').innerText = '未登录';
+            document.getElementById('loginLink').style.display = '';
+            document.getElementById('manageLink').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            return;
+        }
+
+        // 已登录
+        document.getElementById('userStatus').innerText = '欢迎：' + username;
+        document.getElementById('loginLink').style.display = 'none';
+        document.getElementById('manageLink').style.display = '';
+        document.getElementById('logoutBtn').style.display = '';
+    }
+
+    // 检查登录状态后跳转详情
+    function checkLoginAndGo(id) {
+
+        if (localStorage.getItem('isLogin') !== 'true') {
+            alert('请先登录后再查看岗位详情');
+            return;
+        }
+
+        const cookies = document.cookie.split(';');
+        let isLogged = false;
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'username' && value) {
+                isLogged = true;
+                break;
+            }
+        }
+        if (!isLogged) {
+            alert('请先登录后再查看岗位详情');
+            return;
+        }
+        location.href = 'detail.html?id=' + id;
+    }
+
+    // 退出登录
+    document.getElementById("logoutBtn").addEventListener("click", function(e) {
+        e.preventDefault();
+        // 清除 cookie
+        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("user");
+        fetch("logout.php")
+            .then(res => res.json())
+            .then(data => {
+                location.href = "login.html";
+            })
+            .catch(err => {
+                location.href = "login.html";
+            });
+    });
+
+    // 页面加载时获取数据
+    window.onload = function() {
+        checkLoginStatus();
+        loadJobs();
+    };
+</script>
+</body>
+</html>

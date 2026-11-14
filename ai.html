@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI实习智能问答</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background-color: #171723;
+            background-image: linear-gradient(to bottom,
+            #171723 0%,
+            #1d1d2e 40%,
+            #2b1f38 70%,
+            #171723 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .city-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, #171723 0%, transparent 100%);
+            z-index: 0;
+        }
+        .city-bg::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                    linear-gradient(to right,
+                    #171723 0%, #171723 2%, transparent 2%, transparent 8%,
+                    #171723 8%, #171723 10%, transparent 10%, transparent 15%,
+                    #171723 15%, #171723 20%, transparent 20%, transparent 25%,
+                    #171723 25%, #171723 30%, transparent 30%, transparent 38%,
+                    #171723 38%, #171723 40%, transparent 40%, transparent 48%,
+                    #171723 48%, #171723 52%, transparent 52%, transparent 60%,
+                    #171723 60%, #171723 63%, transparent 63%, transparent 70%,
+                    #171723 70%, #171723 75%, transparent 75%, transparent 80%,
+                    #171723 80%, #171723 83%, transparent 83%, transparent 90%,
+                    #171723 90%, #171723 95%, transparent 95%);
+            opacity: 0.8;
+        }
+
+        .ground-lines {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25%;
+            background: linear-gradient(to top, rgba(255,74,158,0.1) 0%, transparent 100%);
+            z-index: 0;
+        }
+        .ground-lines::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #ff4a9e, transparent);
+            box-shadow: 0 0 15px #ff4a9e, 0 0 30px rgba(255,74,158,0.5);
+        }
+
+        .data-stream {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.6;
+        }
+        .data-stream span {
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, #ff4a9e, transparent);
+            animation: stream 3s linear infinite;
+        }
+        .data-stream span:nth-child(1) { left: 5%; }
+        .data-stream span:nth-child(2) { left: 15%; animation-delay: 0.3s; }
+        .data-stream span:nth-child(3) { left: 25%; animation-delay: 0.6s; }
+        .data-stream span:nth-child(4) { left: 35%; animation-delay: 0.9s; }
+        .data-stream span:nth-child(5) { left: 45%; animation-delay: 1.2s; }
+        .data-stream span:nth-child(6) { left: 55%; animation-delay: 1.5s; }
+        .data-stream span:nth-child(7) { left: 65%; animation-delay: 1.8s; }
+        .data-stream span:nth-child(8) { left: 75%; animation-delay: 2.1s; }
+        .data-stream span:nth-child(9) { left: 85%; animation-delay: 2.4s; }
+        .data-stream span:nth-child(10) { left: 95%; animation-delay: 2.7s; }
+
+        @keyframes stream {
+            0% { transform: translateY(-100%); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+
+        .nav {
+            position: relative;
+            z-index: 10;
+            background: rgba(30, 30, 46, 0.9);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 74, 158, 0.2);
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 26px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #ffb6c1, #ff4a9e);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .nav-menu a {
+            color: #eaeaea;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255, 74, 158, 0.15);
+            border-color: rgba(255, 74, 158, 0.3);
+            box-shadow: 0 0 10px rgba(255, 74, 158, 0.2);
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 75%;
+            margin: 60px auto;
+        }
+
+        .ai-box {
+            background: rgba(30, 30, 46, 0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 74, 158, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 650px;
+        }
+
+        .ai-box h3 {
+            background: linear-gradient(90deg, #ffb6c1, #ff4a9e);
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .chat-window {
+            flex: 1;
+            background: rgba(20, 20, 35, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(90deg, #ff4a9e, #ff7eb9);
+            color: #fff;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.08);
+            color: #eee;
+            border: 1px solid rgba(255, 74, 158, 0.2);
+        }
+
+        .input-area {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 16px 25px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 74, 158, 0.2);
+            border-radius: 8px;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .ai-input:focus {
+            border-color: #ff4a9e;
+            box-shadow: 0 0 12px rgba(255, 74, 158, 0.25);
+        }
+
+        .ai-btn {
+            padding: 16px 40px;
+            background: linear-gradient(90deg, #ff4a9e, #ff7eb9);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 74, 158, 0.3);
+        }
+
+        .ai-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 74, 158, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="city-bg"></div>
+<div class="ground-lines"></div>
+<div class="data-stream">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="nav">
+    <div class="nav-logo">AI实习智能问答</div>
+    <div class="nav-menu">
+        <a href="index.html">首页</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="ai-box">
+        <h3>AI智能助手 · 解答实习疑问</h3>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="message ai-message">你好！我是AI实习助手，有什么可以帮你的？</div>
+        </div>
+
+        <div class="input-area">
+            <input class="ai-input" id="questionInput" placeholder="请输入你想咨询的实习问题...">
+            <button class="ai-btn" onclick="sendQuestion()">发起提问</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function getAIResponse(message) {
+        const res = await fetch("ai.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "msg=" + encodeURIComponent(message)
+        });
+        const data = await res.json();
+        return data.code === 1 ? data.data : data.msg;
+    }
+
+    async function sendQuestion() {
+        let input = document.getElementById("questionInput");
+        let chatWindow = document.getElementById("chatWindow");
+        let text = input.value.trim();
+        if (text === "") return;
+
+        let userMsg = document.createElement("div");
+        userMsg.className = "message user-message";
+        userMsg.innerText = text;
+        chatWindow.appendChild(userMsg);
+        input.value = "";
+
+        let aiMsg = document.createElement("div");
+        aiMsg.className = "message ai-message";
+        aiMsg.innerText = "AI思考中...";
+        chatWindow.appendChild(aiMsg);
+
+        let reply = await getAIResponse(text);
+        aiMsg.innerText = reply;
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 50px 0;
+        }
+
+        .register-box {
+            width: 460px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            padding: 50px 42px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-box h2 {
+            text-align: center;
+            background: linear-gradient(90deg, #ffb6c1, #d890a5);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 35px;
+            font-size: 24px;
+        }
+
+        .input-item {
+            margin-bottom: 20px;
+        }
+
+        .input-item input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            border-radius: 12px;
+            outline: none;
+            color: #fff;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .input-item input:focus {
+            border-color: #ffb6c1;
+            box-shadow: 0 0 10px rgba(255, 182, 193, 0.2);
+        }
+
+        .reg-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #ffb6c1, #d890a5);
+            border: none;
+            color: #1a1a2e;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.3);
+            margin-top: 10px;
+        }
+
+        .reg-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .link a {
+            color: #ffb6c1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="register-box">
+    <h2>用户注册</h2>
+    <form id="registerForm">
+        <div class="input-item">
+            <input type="text" name="username" placeholder="用户名（首字符为字母）">
+        </div>
+        <div class="input-item">
+            <input type="email" name="email" placeholder="邮箱地址">
+        </div>
+        <div class="input-item">
+            <input type="password" name="password" placeholder="密码（6-8位）">
+        </div>
+        <div class="input-item">
+            <input type="password" name="password1" placeholder="确认密码">
+        </div>
+        <div class="input-item">
+            <input type="text" name="address" placeholder="联系地址">
+        </div>
+        <button type="submit" class="reg-btn">提交注册</button>
+    </form>
+
+    <div class="link">
+        已有账号？<a href="login.html">前往登录</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        fetch("register.php", {
+            method: "POST",
+            body: formData
+        }).then(res => res.json()).then(data => {
+            alert(data.msg);
+            if (data.code === 1) {
+                location.href = "login.html";
+            }
+        }).catch(err => {
+            console.error(err);
+            alert("网络错误");
+        });
+    });
+</script>
+</body>
+</html>

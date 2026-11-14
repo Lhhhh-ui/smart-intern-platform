@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实习信息管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+        }
+        .nav {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-size: 26px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #ffb6c1, #c8a2c8);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-menu a {
+            color: #eaeaea;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .nav-menu a:hover {
+            background: rgba(255, 182, 193, 0.15);
+            border-color: rgba(255, 182, 193, 0.3);
+            box-shadow: 0 0 10px rgba(255, 182, 193, 0.2);
+        }
+        .user-info {
+            color: #ffb6c1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .container {
+            width: 80%;
+            margin: 30px auto;
+        }
+        .manage-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+            margin-bottom: 30px;
+        }
+        .manage-card h3 {
+            color: #ffb6c1;
+            margin-bottom: 25px;
+            font-size: 20px;
+        }
+        .input-item {
+            margin-bottom: 18px;
+        }
+        .input-item input,
+        .input-item textarea,
+        .input-item select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+            border-radius: 12px;
+            outline: none;
+            color: #fff;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .input-item textarea {
+            resize: none;
+            min-height: 100px;
+        }
+        .input-item input:focus,
+        .input-item textarea:focus,
+        .input-item select:focus {
+            border-color: #ffb6c1;
+            box-shadow: 0 0 10px rgba(255, 182, 193, 0.2);
+        }
+        .input-item select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .btn {
+            padding: 12px 28px;
+            background: linear-gradient(90deg, #ffb6c1, #d890a5);
+            border: none;
+            color: #1a1a2e;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #eaeaea;
+            border: 1px solid rgba(255, 182, 193, 0.3);
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a5a);
+            color: #fff;
+        }
+        .btn-small {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        /* 列表样式 */
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .list-table th,
+        .list-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 182, 193, 0.15);
+            color: #eaeaea;
+            font-size: 14px;
+        }
+        .list-table th {
+            color: #ffb6c1;
+            font-weight: 600;
+            background: rgba(255, 182, 193, 0.08);
+        }
+        .list-table tr:hover {
+            background: rgba(255, 182, 193, 0.05);
+        }
+        .list-table td {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 隐藏编辑ID */
+        #editId {
+            display: none;
+        }
+
+        .form-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .form-mode {
+            color: #c8a2c8;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="nav">
+    <div class="nav-logo">实习信息管理中心</div>
+    <div class="nav-menu">
+        <span class="user-info" id="userInfo">加载中...</span>
+        <a href="index.html">首页</a>
+        <a href="#" onclick="logout()">退出</a>
+    </div>
+</div>
+
+<div class="container">
+    <!-- 添加/编辑表单 -->
+    <div class="manage-card">
+        <div class="form-title">
+            <h3 id="formTitle">添加实习岗位</h3>
+            <span class="form-mode" id="formMode">新增模式</span>
+        </div>
+
+        <form id="manageForm">
+            <input type="hidden" id="editId" name="intid" value="">
+
+            <div class="input-item">
+                <input type="text" name="postname" placeholder="岗位名称" required>
+            </div>
+            <div class="input-item">
+                <select name="category" required>
+                    <option value="it">计算机IT</option>
+                    <option value="design">设计创意</option>
+                    <option value="finance">金融财会</option>
+                    <option value="admin">文职行政</option>
+                </select>
+            </div>
+            <div class="input-item">
+                <input type="text" name="salary" placeholder="薪资范围" required>
+            </div>
+            <div class="input-item">
+                <input type="text" name="education" placeholder="学历要求" required>
+            </div>
+            <div class="input-item">
+                <input type="text" name="workplace" placeholder="公司地址" required>
+            </div>
+            <div class="input-item">
+                <textarea name="request" placeholder="岗位详细要求" required></textarea>
+            </div>
+            <div class="btn-group">
+                <button class="btn" type="submit" id="submitBtn">保存信息</button>
+                <button class="btn btn-secondary" type="button" id="cancelBtn" style="display:none;">取消编辑</button>
+                <button class="btn btn-secondary" type="reset">重置内容</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 实习信息列表 -->
+    <div class="manage-card">
+        <h3>实习信息列表</h3>
+        <table class="list-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>岗位名称</th>
+                <th>类别</th>
+                <th>薪资</th>
+                <th>学历</th>
+                <th>地址</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="internList">
+            <tr><td colspan="7" style="text-align:center;">加载中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // ========== 1. 检查登录状态 ==========
+    function checkLogin() {
+        // 先检查 localStorage
+        if (localStorage.getItem('isLogin') !== 'true') {
+            alert('请先登录！');
+            location.href = 'login.html';
+            return false;
+        }
+
+        // 再检查 cookie 中是否有用户名
+        const cookies = document.cookie.split(';');
+        let username = null;
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'username') {
+                username = decodeURIComponent(value);
+                break;
+            }
+        }
+
+        if (!username) {
+
+            localStorage.removeItem('isLogin');
+            localStorage.removeItem('user');
+            alert('请先登录！');
+            location.href = 'login.html';
+            return false;
+        }
+
+        document.getElementById("userInfo").innerText = "欢迎：" + username;
+        return true;
+    }
+
+    // ========== 2. 退出登录 ==========
+    function logout() {
+        // 前端先清除 cookie
+        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+        localStorage.removeItem('isLogin');
+        localStorage.removeItem('user');
+        fetch('logout.php')
+            .then(res => res.json())
+            .then(data => {
+                location.href = 'login.html';
+            })
+            .catch(err => {
+                location.href = 'login.html';
+            });
+    }
+
+    // ========== 3. 加载实习列表 ==========
+    function loadList() {
+        fetch("manage.php", {
+            method: "POST",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: "action=list"
+        })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById("internList");
+                if (data.code === 1 && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(item => `
+                    <tr>
+                        <td>${item.intid}</td>
+                        <td>${item.iname}</td>
+                        <td>${item.category}</td>
+                        <td>${item.salary}</td>
+                        <td>${item.edu}</td>
+                        <td>${item.waddr}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-small" onclick="editIntern(${item.intid})">编辑</button>
+                                <button class="btn btn-small btn-danger" onclick="deleteIntern(${item.intid})">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">暂无数据</td></tr>';
+                }
+            });
+    }
+
+    // ========== 4. 编辑实习信息 ==========
+    function editIntern(id) {
+        fetch("manage.php", {
+            method: "POST",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: "action=get&intid=" + id
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.code === 1) {
+                    const item = data.data;
+                    document.getElementById("editId").value = item.intid;
+                    document.querySelector("[name='postname']").value = item.iname;
+                    document.querySelector("[name='category']").value = item.category;
+                    document.querySelector("[name='salary']").value = item.salary;
+                    document.querySelector("[name='education']").value = item.edu;
+                    document.querySelector("[name='workplace']").value = item.waddr;
+                    document.querySelector("[name='request']").value = item.request;
+
+                    document.getElementById("formTitle").innerText = "编辑实习岗位";
+                    document.getElementById("formMode").innerText = "编辑模式 (ID: " + item.intid + ")";
+                    document.getElementById("submitBtn").innerText = "保存修改";
+                    document.getElementById("cancelBtn").style.display = "inline-block";
+
+                    document.querySelector(".manage-card").scrollIntoView({behavior: "smooth"});
+                } else {
+                    alert(data.msg);
+                }
+            });
+    }
+
+    // ========== 5. 删除实习信息 ==========
+    function deleteIntern(id) {
+        if (!confirm("确定要删除该实习信息吗？")) return;
+
+        fetch("manage.php", {
+            method: "POST",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: "action=delete&intid=" + id
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.msg);
+                if (data.code === 1) {
+                    loadList();
+                }
+            });
+    }
+
+    // ========== 6. 取消编辑 ==========
+    document.getElementById("cancelBtn").addEventListener("click", function() {
+        resetForm();
+    });
+
+    function resetForm() {
+        document.getElementById("manageForm").reset();
+        document.getElementById("editId").value = "";
+        document.getElementById("formTitle").innerText = "添加实习岗位";
+        document.getElementById("formMode").innerText = "新增模式";
+        document.getElementById("submitBtn").innerText = "保存信息";
+        document.getElementById("cancelBtn").style.display = "none";
+    }
+
+    // ========== 7. 表单提交（添加/修改）==========
+    document.getElementById("manageForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        const editId = document.getElementById("editId").value;
+        const action = editId ? "update" : "add";
+        formData.append("action", action);
+        if (editId) {
+            formData.append("intid", editId);
+        }
+
+        fetch("manage.php", {
+            method: "POST",
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.msg);
+                if (data.code === 1) {
+                    resetForm();
+                    loadList();
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("网络错误");
+            });
+    });
+
+    // ========== 页面加载时执行 ==========
+    window.onload = function() {
+        if (checkLogin()) {
+            loadList();
+        }
+    };
+</script>
+</body>
+</html>
