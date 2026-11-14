@@ -1,0 +1,13 @@
+# PHPStorm IDE配置
+.idea/
+
+# 缓存、日志
+runtime/
+*.log
+
+# 敏感配置（数据库账号密码）
+config/database.php
+
+# 系统垃圾文件
+.DS_Store
+Thumbs.db
