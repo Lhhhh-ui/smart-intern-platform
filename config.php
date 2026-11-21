@@ -1,9 +1,22 @@
 <?php
-// 数据库连接配置
+// 加载环境变量
+$envFile = __DIR__ . '/.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos($line, '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($value);
+        }
+    }
+}
+
+// 数据库连接配置（从环境变量读取）
 $host = 'localhost';
-$dbuser = 'root';
-$dbpass = 'root';
-$dbname = 'database';
+$dbuser = $_ENV['DB_USER'] ?? 'root';
+$dbpass = $_ENV['DB_PASS'] ?? 'root';
+$dbname = $_ENV['DB_NAME'] ?? 'database';
 $port = '3306';
 
 // 建立连接

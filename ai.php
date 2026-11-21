@@ -2,6 +2,19 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+// 加载环境变量
+$envFile = __DIR__ . '/.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos($line, '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($value);
+        }
+    }
+}
+
 $msg = $_POST['msg'] ?? '';
 if (!$msg) {
     echo json_encode(['code' => 0, 'msg' => '请输入问题']);
@@ -9,7 +22,12 @@ if (!$msg) {
 }
 
 $url = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
-$apiKey = "f573357444064b2692edc66f01443033.n3Yqz0dlLLPFaoVc";
+$apiKey = $_ENV['ZHIPU_API_KEY'] ?? '';
+
+if (empty($apiKey)) {
+    echo json_encode(['code' => 0, 'msg' => 'API密钥未配置']);
+    exit;
+}
 
 $postData = [
     "model" => "glm-4-flash",
